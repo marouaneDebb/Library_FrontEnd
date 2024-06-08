@@ -28,7 +28,7 @@ function Login() {
       localStorage.setItem("token", response.data.password);
       localStorage.setItem("role", response.data.role);
       localStorage.setItem("user", response.data.username);
-      localStorage.setItem("password", password );
+      localStorage.setItem("password", password);
       window.location.href = `/${response.data.username}`;
     } catch (error) {
       console.error("Error:", error.message);
