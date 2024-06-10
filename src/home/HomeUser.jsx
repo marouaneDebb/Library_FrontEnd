@@ -54,9 +54,9 @@ function HomeUser() {
         <main className="mainu col-span-10">
           <section id="home">
             <p className="intro">
-              Bienvenue sur le site de notre bibliothèque. Nous offrons une
-              vaste gamme de livres, de ressources numériques et d'événements
-              communautaires.
+              Bienvenue,
+              
+              
             </p>
             <div class="highlight hours">
               <h3>Heures d'ouverture</h3>

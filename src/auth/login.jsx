@@ -1,32 +1,47 @@
 import React, { useState } from "react";
 import "./auth.css";
 import video from "../assets/video/1472560_Education_People_1920x1080.mp4";
+import axios from "axios";
+
 function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [credentials, setCredentials] = useState();
   const [error, setError] = useState("");
 
-  async function handleSubmit(event){
+  async function handleSubmit(event) {
     event.preventDefault();
+    
     setError("");
-    try {
-      const response = await axios.get('http://localhost:5000/users/search', {
-        params: {
-          username: username,
-          password: password
+      
+      try {
+        const response = await axios.get('http://localhost:5000/users/search?' , {
+          params: {
+            username: username,
+            password: password
+          }
+        
+        });
+        
+        localStorage.setItem("token", response.data.password);
+        localStorage.setItem("role", response.data.role);
+        localStorage.setItem("user", response.data.username);
+        window.location.href = `/${response.data.username}`;
+
+      
+      } catch (error) {
+        if (error.response.status === 404) {
+          // Handle 404 error here
+          setError("Invalid username or password");
+          console.error('User not found');
+        } else {
+          // Handle other errors
+          console.error('Error:', error.message);
         }
-      });
-      // Handle successful response here
-      console.log('Response:', response.data);
-    } catch (error) {
-      if (error.response.status === 404) {
-        setError('username or password is incorrect');
-        console.error('User not found');
-      } else {
-        // Handle other errors
-        console.error('Error:', error.message);
       }
-    }
+  
+  
+   
     
   }
   return (
@@ -71,14 +86,14 @@ function Login() {
           
           <form className ="grid grid-cols-4   gap-7" onSubmit={handleSubmit}>
             <label>
-              Email
+              Username
               </label>
               <input
               className="col-span-3"
                 type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="username"
               />
            
             <label>

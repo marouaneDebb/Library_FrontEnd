@@ -1,6 +1,79 @@
 import "./home.css";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
+import { useEffect, useState } from "react";
 function Home() {
+  if (localStorage.getItem("token")) {
+    window.location.href =`/${localStorage.getItem("user")}`;
+  }
+  const [books, setBooks] = useState([]);
+  useEffect(() => {
+
+  setBooks([
+    {
+      title: "The Great Gatsby",
+      author: "F. Scott Fitzgerald",
+      datepub: "1925",
+      avalibale: "10",
+    },
+    {
+      title: "To Kill a Mockingbird",
+      author: "Harper Lee",
+      datepub: "1960",
+      avalibale: "8",
+    },
+    {
+      title: "1984",
+      author: "George Orwell",
+      datepub: "1949",
+      avalibale: "12",
+    },
+    {
+      title: "Pride and Prejudice",
+      author: "Jane Austen",
+      datepub: "1813",
+      avalibale: "6",
+    },
+    {
+      title: "The Catcher in the Rye",
+      author: "J.D. Salinger",
+      datepub: "1951",
+      avalibale: "4",
+    },
+  ]);
+  }, []);
+  const bookmapping = books.map((book) => {
+    return (
+      <tr>
+        <td>{book.title}</td>
+        <td>{book.author}</td>
+        <td>{book.datepub}</td>
+        <td>{book.avalibale}</td>
+      </tr>
+    );
+  });
+  const myFunction = (e) => {
+    e.preventDefault();
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector("table");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td");
+      for (var j = 0; j < td.length; j++) {
+        let tdata = td[j];
+        if (tdata) {
+          txtValue = tdata.textContent || tdata.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            break;
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  };
   return (
     <div className="">
       <nav className=" nav grid grid-cols-10 gap-3">
@@ -11,7 +84,7 @@ function Home() {
             <a href="/about">About</a>
           </li>
           <li>
-            <a href="/contact">Contact</a>
+            <a href="#books">Books</a>
           </li>
           <li className=" col-span-2">
             {localStorage.getItem("token") ? (
@@ -38,9 +111,9 @@ function Home() {
       <main>
         <section id="home">
           <p className="intro">
-            Bienvenue sur le site de notre bibliothèque. Nous offrons une vaste
-            gamme de livres, de ressources numériques et d'événements
-            communautaires.
+            Bienvenue,
+            
+            
           </p>
           <div class="highlight hours">
             <h3>Heures d'ouverture</h3>
@@ -90,6 +163,29 @@ function Home() {
             </ul>
           </div>
         </section>
+
+        <div id="books" className="table" >
+                <input
+                  type="text"
+                  id="myInput"
+                  onChange={(e) => {
+                    myFunction(e);
+                  }}
+                  placeholder="Search .."
+                  title="Type in a name"
+                />
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>date de publication</th>
+                      <th>copies disponibles</th>
+                    </tr>
+                  </thead>
+                  <tbody>{bookmapping}</tbody>
+                </table>
+              </div>
       </main>
 
       <footer>

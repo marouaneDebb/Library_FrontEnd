@@ -15,42 +15,41 @@ function Book() {
     { path: "/books/all", label: "All Books" },
   ];
 
-  const getBooks = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/books");
-      setBooks(response.data);
-    } catch (error) {
-      console.error("Error:", error.message);
-    }
-  };
-
-  const postBook = async (book) => {
-    try {
-      const response = await axios.post("http://localhost:5000/books", book);
-      console.log(response.data);
-    }
-    catch (error) {
-      console.error("Error:", error.message);
-    }
-  };
-
-
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser);
     handleRoutes();
+
     setBooks([
       {
-        title: "Sample Title",
-        author: "Sample Author",
-        datepub: "Sample Date",
-        avalibale: "25",
+        title: "The Great Gatsby",
+        author: "F. Scott Fitzgerald",
+        datepub: "1925",
+        avalibale: "10",
       },
       {
-        title: "Sample Title",
-        author: "Sample Author",
-        datepub: "Sample Date",
-        avalibale: "25",
+        title: "To Kill a Mockingbird",
+        author: "Harper Lee",
+        datepub: "1960",
+        avalibale: "8",
+      },
+      {
+        title: "1984",
+        author: "George Orwell",
+        datepub: "1949",
+        avalibale: "12",
+      },
+      {
+        title: "Pride and Prejudice",
+        author: "Jane Austen",
+        datepub: "1813",
+        avalibale: "6",
+      },
+      {
+        title: "The Catcher in the Rye",
+        author: "J.D. Salinger",
+        datepub: "1951",
+        avalibale: "4",
       },
     ]);
   }, [location]);
@@ -81,6 +80,29 @@ function Book() {
     console.log(book);
   };
 
+  const myFunction = (e) => {
+    e.preventDefault();
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector("table");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td");
+      for (var j = 0; j < td.length; j++) {
+        let tdata = td[j];
+        if (tdata) {
+          txtValue = tdata.textContent || tdata.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            break;
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  };
   return (
     <div>
       <nav className="nav grid grid-cols-10 gap-3">
@@ -165,6 +187,15 @@ function Book() {
             )}
             {activeRoute === "/books/all" && (
               <div className="table">
+                <input
+                  type="text"
+                  id="myInput"
+                  onChange={(e) => {
+                    myFunction(e);
+                  }}
+                  placeholder="Search .."
+                  title="Type in a name"
+                />
                 <table>
                   <thead>
                     <tr>

@@ -2,94 +2,113 @@ import React, { useState, useEffect } from "react";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
-import'./pages.css';
+import "./pages.css";
+import axios from "axios";
 
 function Agents() {
   const location = useLocation();
+  const [role, setRole] = useState("");
   const [user, setUser] = useState(null);
   const [activeRoute, setActiveRoute] = useState("");
   const [agents, setAgents] = useState([]);
-  const [agent, setAgent] = useState({
-  });
+  const [agent, setAgent] = useState({});
   const attribus = ["username", "role"];
   const formatDate = (date) => {
     const year = String(date.getFullYear()).slice(2);
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}${month}${day}01`;
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}${month}${day}`;
   };
-  const date = new Date();
-    const password = formatDate(date);
-    
+
+  const [password, setPassword] = useState("");
   const menuItems = [
     { path: "/agent", label: "Add Agent" },
     { path: "/agent/all", label: "All Agent" },
   ];
+  const listRoles = ["admin", "agent"];
+  async function preparingPassword(event) {
+    const date = new Date();
+    const formattedDate = formatDate(date);
 
-  const getAgents = async () => { 
     try {
-      const response = await axios.get("http://localhost:5000/agents");
+      const response = await axios.get("http://localhost:5000/users");
       setAgents(response.data);
+      let count = response.data.filter((agent) =>
+        agent.password.includes(formattedDate)
+      ).length;
+      setPassword(`${formattedDate}${(count + 1).toString().padStart(3, "0")}`);
+    } catch (error) {
+      console.error("Error fetching users", error);
     }
-    catch (error) {
-      console.error("Error:", error.message);
-    }
-  };
-
-  const postAgent = async (agent) => {
-    try {
-      const response = await axios.post("http://localhost:5000/agents", agent);
-      console.log(response.data);
-    }
-    catch (error) {
-      console.error("Error:", error.message);
-    }
-  };
-
+  }
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser);
     handleRoutes();
-    setAgents([
-        {
-            username: "Sample Title",
-            role: "Sample Author",
-        },
-        {
-            username: "Sample Title",
-            role: "Sample Author",
-        },
-    ]);
 
+    preparingPassword();
   }, [location]);
-  const agentMapping=agents.map((agent) => {
+  const agentMapping = agents.map((agent) => {
     return (
       <tr>
         <td>{agent.username}</td>
         <td>{agent.role}</td>
-        
       </tr>
     );
-  }
-  );
-  const handleRoutes   = () => {
+  });
+  const handleSelectChange = (event) => {
+    setRole(event.target.value);
+    handleInputChange(event);
+  };
+  const handleRoutes = () => {
     const currentPath = location.pathname;
     const matchingItem = menuItems.find((item) => currentPath === item.path);
     setActiveRoute(matchingItem ? matchingItem.path : "");
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setAgent(prevAgent => ({
+    setAgent((prevAgent) => ({
       ...prevAgent,
-      [name]: value
+      [name]: value,
     }));
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    agent.password = password;
+    try {
+      const response = await axios.post("http://localhost:5000/users", agent);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error inserting user", error);
+    }
+
     setAgent({});
-    console.log(agent);
-  }
+    window.location.reload();
+  };
+  const myFunction = (e) => {
+    e.preventDefault();
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector("table");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td");
+      for (var j = 0; j < td.length; j++) {
+        let tdata = td[j];
+        if (tdata) {
+          txtValue = tdata.textContent || tdata.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            break;
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  };
 
   return (
     <div>
@@ -144,38 +163,71 @@ function Agents() {
           <div>
             {activeRoute === "/agent" && (
               <div className=" py-20">
+                <form className="form-book grid grid-cols-6 gap-5">
+                  <label>username</label>
+                  <input
+                    name="username"
+                    onChange={handleInputChange}
+                    className="  col-span-2"
+                    type="text"
+                    placeholder={"username"}
+                  />
 
-              <form className="form-book grid grid-cols-6 gap-5">
-                {attribus.map((label) => (
-                  <React.Fragment>
-                    <label >{label}</label>
-                    <input name={label} onChange={handleInputChange} className="  col-span-2" type="text" placeholder={label} />
-                  </React.Fragment>
-                ))}
-                <label >password</label>
-                <input name="password" onChange={handleInputChange} className="password col-span-2" type="text" placeholder={password} disabled/>
+                  <label>role</label>
+                  <select
+                    name="role"
+                    id="role"
+                    value={role}
+                    onChange={handleSelectChange}
+                    className="col-span-2"
+                  >
+                    <option value="">Sélectionnez un rôle</option>
+                    {listRoles.map((role, index) => (
+                      <option key={index} value={role}>
+                        {role}
+                      </option>
+                    ))}
+                  </select>
+                  <label>password</label>
+                  <input
+                    name="password"
+                    onChange={handleInputChange}
+                    className="password col-span-2"
+                    type="text"
+                    placeholder={password}
+                    disabled
+                  />
 
-                <button onClick={handleSubmit} className="col-start-5 col-span-2">Add Book</button>
-              </form>
+                  <button
+                    onClick={handleSubmit}
+                    className="col-start-5 col-span-2"
+                  >
+                    Add Agent
+                  </button>
+                </form>
               </div>
             )}
             {activeRoute === "/agent/all" && (
-
               <div className="table">
-                <table >
+                <input
+                  type="text"
+                  id="myInput"
+                  onChange={(e) => {
+                    myFunction(e);
+                  }}
+                  placeholder="Search .."
+                  title="Type in a name"
+                />
+                <table>
                   <thead>
                     <tr>
-                        {attribus.map((attribu) => (
-                            <th>{attribu}</th>
-                        ))}
-                     
+                      {attribus.map((attribu) => (
+                        <th>{attribu}</th>
+                      ))}
                     </tr>
                   </thead>
-                  <tbody>
-                    {agentMapping}
-                  </tbody>
+                  <tbody>{agentMapping}</tbody>
                 </table>
-                
               </div>
             )}
           </div>

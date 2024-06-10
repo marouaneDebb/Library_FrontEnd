@@ -23,25 +23,6 @@ function AdherentPrets() {
   
   ];
 
-  const getMyPrets = async (username) => {
-
-    try {
-      const response = await axios.get("http://localhost:5000/prets", {
-        params: {
-          adherent: username,
-        },
-      });
-      setPrets(response.data);
-    } catch (error) {
-      console.error("Error:", error.message);
-    }
-
-   
-  }
-
-  
-  
-
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser);
@@ -110,7 +91,29 @@ function AdherentPrets() {
     setPret({});
     console.log(pret);
   };
-
+  const myFunction = (e) => {
+    e.preventDefault();
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector("table");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td");
+      for (var j = 0; j < td.length; j++) {
+        let tdata = td[j];
+        if (tdata) {
+          txtValue = tdata.textContent || tdata.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            break;
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  };
   return (
     <div>
       <nav className="nav grid grid-cols-10 gap-3">
@@ -153,6 +156,15 @@ function AdherentPrets() {
         
           
               <div className="table">
+              <input
+                  type="text"
+                  id="myInput"
+                  onChange={(e) => {
+                    myFunction(e);
+                  }}
+                  placeholder="Search .."
+                  title="Type in a name"
+                />
                 <table>
                   <thead>
                     <tr>

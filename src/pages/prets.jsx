@@ -22,28 +22,6 @@ function Prets() {
     { path: "/pret", label: "Add pret" },
     { path: "/pret/all", label: "All pret" },
   ];
-  
-  const getPrets = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/prets");
-      setPrets(response.data);
-    }
-    catch (error) {
-      console.error("Error:", error.message);
-    }
-  };
-
-  const postPret = async () => {
-    
-    try {
-      const response = await axios.post("http://localhost:5000/prets", pret);
-      console.log(response.data);
-    }
-    catch (error) {
-      console.error("Error:", error.message);
-    }
-  };
-
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -84,10 +62,22 @@ function Prets() {
         <td>{pret.livre}</td>
         <td>{pret.datepret}</td>
         <td>{pret.dateretour}</td>
-        <td>{pret.status}</td>
+        <td className={"status-btn"+(pret.status === "OK"?" ok":" not-ok")} onClick={()=>{handleStatus(pret)}}>{pret.status}</td>
       </tr>
     );
   });
+  const handleStatus = (pret) => {
+    console.log(pret);
+    if (pret.status === "OK") {
+      pret.status = "Non Rendu";
+
+    } else {
+      pret.status = "OK";
+    }
+    setPrets([...prets]);
+ 
+    
+  };
   const handleRoutes = () => {
     const currentPath = location.pathname;
     const matchingItem = menuItems.find((item) => currentPath === item.path);
@@ -113,7 +103,29 @@ function Prets() {
     setPret({});
     console.log(pret);
   };
-
+  const myFunction = (e) => {
+    e.preventDefault();
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector("table");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td");
+      for (var j = 0; j < td.length; j++) {
+        let tdata = td[j];
+        if (tdata) {
+          txtValue = tdata.textContent || tdata.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            break;
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  };
   return (
     <div>
       <nav className="nav grid grid-cols-10 gap-3">
@@ -192,6 +204,15 @@ function Prets() {
             )}
             {activeRoute === "/pret/all" && (
               <div className="table">
+                <input
+                  type="text"
+                  id="myInput"
+                  onChange={(e) => {
+                    myFunction(e);
+                  }}
+                  placeholder="Search .."
+                  title="Type in a name"
+                />
                 <table>
                   <thead>
                     <tr>
