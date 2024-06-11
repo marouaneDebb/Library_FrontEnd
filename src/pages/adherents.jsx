@@ -9,16 +9,26 @@ function Adherents() {
   const [user, setUser] = useState(null);
   const [activeRoute, setActiveRoute] = useState("");
   const [adherents, setAdherents] = useState([]);
-  const [adherent, setAdherent] = useState({
+  const [adherent, setAdherent] = useState({});
+  const [contact, setContact] = useState({
+    mail: "",
+    téléphone: "",
+    adresse: "",
   });
   const [password, setPassword] = useState("");
-  const attribus = ["prenom", "nom","username", "email", "telephone", "adresse"];
+  const attribus = [
+    { label: "prenom", name: "prénom" },
+    { label: "nom", name: "nom" },
+    { label: "username", name: "username" },
+    { label: "email", name: "mail" },
+    { label: "téléphone", name: "téléphone" },
+    { label: "adresse", name: "adresse" },
+  ];
 
   const menuItems = [
     { path: "/adherent", label: "Add Adherent" },
     { path: "/adherent/all", label: "All Adherent" },
   ];
-
 
   const formatDate = (date) => {
     const year = String(date.getFullYear()).slice(2);
@@ -29,13 +39,21 @@ function Adherents() {
   async function preparingPassword(event) {
     const date = new Date();
     const formattedDate = formatDate(date);
-
     try {
-      const response = await axios.get("http://localhost:5000/users");
-      let count = response.data.filter((agent) =>
-        agent.password.includes(formattedDate)
-      ).length;
-      setPassword(`${formattedDate}${(count + 1).toString().padStart(3, "0")}`);
+      const response = await axios.get("http://192.168.198.73:2000/users");
+      
+      let count = response.data.length;
+       setPassword(`${formattedDate}${(count).toString().padStart(3, "0")}`);
+    }
+    
+    catch (error){
+      console.error("Error fetching users", error);
+    }
+    try {
+      const response = await axios.get("http://192.168.198.73:2000/adherents");
+      
+     
+      setAdherents(response.data);
     } catch (error) {
       console.error("Error fetching users", error);
     }
@@ -46,61 +64,81 @@ function Adherents() {
     setUser(storedUser);
     handleRoutes();
     preparingPassword();
-    setAdherents([
-      {
-        prenom: "Sample Title",
-        nom: "Sample Author",
-        username: "Sample Date",
-        email: "Sample Date",
-        telephone:"25",
-        adresse:"25 quartier ville pays"
-      },
-      {
-        prenom: "Sample Title",
-        nom: "Sample Author",
-        username: "Sample Date",
-        email: "Sample Date",
-        telephone:"25",
-        adresse:"25 quartier ville pays"
-      },
-    ]);
-
   }, [location]);
-  const adherentMapping=adherents.map((adherent) => {
+
+  const deleteAdherent = async (e) => {
+    e.preventDefault();
+    const username = e.target.parentElement.firstChild.nextSibling.textContent;
+    try {
+      const response = await axios.delete(
+        `http://192.168.198.73:2000/users/${username}`
+      );
+      console.log(response);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
+  };
+
+  
+
+  const adherentMapping = adherents.map((adherent) => {
     return (
       <tr>
-        <td>{adherent.prenom}</td>
+        <td>{adherent.prénom}</td>
         <td>{adherent.nom}</td>
         <td>{adherent.username}</td>
-        <td>{adherent.email}</td>
-        <td>{adherent.telephone}</td>
-        <td>{adherent.adresse}</td>
-        
+        <td>{adherent.contact.mail}</td>
+        <td>{adherent.contact.téléphone}</td>
+        <td>{adherent.contact.adresse}</td>
+        <td onClick={deleteAdherent}>delete</td>
       </tr>
     );
-  }
-  );
-  const handleRoutes   = () => {
+  });
+  const handleRoutes = () => {
     const currentPath = location.pathname;
     const matchingItem = menuItems.find((item) => currentPath === item.path);
     setActiveRoute(matchingItem ? matchingItem.path : "");
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setAdherent(prevAdherent => ({
-      ...prevAdherent,
-      [name]: value
-    }));
+    if (name === "mail" || name === "téléphone" || name === "adresse") {
+      setContact((prevContact) => ({
+        ...prevContact,
+        [name]: value,
+      }));
+      setAdherent((prevAdherent) => ({
+        ...prevAdherent,
+        contact: contact,
+      }));
+    } else {
+      setAdherent((prevAdherent) => ({
+        ...prevAdherent,
+        [name]: value,
+      }));
+    }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = {
-      username:adherent.username,
+      username: adherent.username,
       role: "adherent",
-      password: password,
+      motDePasse: password,
     };
     try {
-      const response = await axios.post("http://localhost:5000/users", user);
+      const response = await axios.post(
+        "http://192.168.198.73:2000/users/add",
+        user
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error inserting user", error);
+    }
+    try {
+      const response = await axios.post(
+        "http://192.168.198.73:2000/adherents/add",
+        adherent
+      );
       console.log(response.data);
     } catch (error) {
       console.error("Error inserting user", error);
@@ -108,7 +146,7 @@ function Adherents() {
 
     setAdherent({});
     window.location.reload();
-  }
+  };
   const myFunction = (e) => {
     e.preventDefault();
     var input, filter, table, tr, td, i, txtValue;
@@ -185,16 +223,21 @@ function Adherents() {
           <div>
             {activeRoute === "/adherent" && (
               <div className=" py-20">
-
-              <form className="form-book grid grid-cols-6 gap-5">
-                {attribus.map((label) => (
-                  <React.Fragment>
-                    <label >{label}</label>
-                    <input name={label} onChange={handleInputChange} className="  col-span-2" type="text" placeholder={label} />
-                  </React.Fragment>
-                ))}
-                <label>password</label>
-                <input
+                <form className="form-book grid grid-cols-6 gap-5">
+                  {attribus.map((e) => (
+                    <React.Fragment>
+                      <label>{e.label}</label>
+                      <input
+                        name={e.name}
+                        onChange={handleInputChange}
+                        className="  col-span-2"
+                        type="text"
+                        placeholder={e.label}
+                      />
+                    </React.Fragment>
+                  ))}
+                  <label>password</label>
+                  <input
                     name="password"
                     onChange={handleInputChange}
                     className="password col-span-2"
@@ -202,12 +245,16 @@ function Adherents() {
                     placeholder={password}
                     disabled
                   />
-                <button onClick={handleSubmit} className="col-start-5 col-span-2">Add Adherent</button>
-              </form>
+                  <button
+                    onClick={handleSubmit}
+                    className="col-start-5 col-span-2"
+                  >
+                    Add Adherent
+                  </button>
+                </form>
               </div>
             )}
             {activeRoute === "/adherent/all" && (
-
               <div className="table">
                 <input
                   type="text"
@@ -218,20 +265,16 @@ function Adherents() {
                   placeholder="Search .."
                   title="Type in a name"
                 />
-                <table >
+                <table>
                   <thead>
                     <tr>
-                        {attribus.map((attribu) => (
-                            <th>{attribu}</th>
-                        ))}
-                     
+                      {attribus.map((attribu) => (
+                        <th>{attribu.label}</th>
+                      ))}
                     </tr>
                   </thead>
-                  <tbody>
-                    {adherentMapping}
-                  </tbody>
+                  <tbody>{adherentMapping}</tbody>
                 </table>
-                
               </div>
             )}
           </div>

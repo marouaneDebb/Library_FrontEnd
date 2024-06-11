@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
-
+import axios from "axios";
+import { c } from "tar";
 function Book() {
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -15,51 +16,50 @@ function Book() {
     { path: "/books/all", label: "All Books" },
   ];
 
+  const getBooks = async () => {  
+    try {
+      const response = await axios.get("http://192.168.198.73:2000/books");
+  
+      setBooks(response.data);
+
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
+  }
+
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser);
     handleRoutes();
-
-    setBooks([
-      {
-        title: "The Great Gatsby",
-        author: "F. Scott Fitzgerald",
-        datepub: "1925",
-        avalibale: "10",
-      },
-      {
-        title: "To Kill a Mockingbird",
-        author: "Harper Lee",
-        datepub: "1960",
-        avalibale: "8",
-      },
-      {
-        title: "1984",
-        author: "George Orwell",
-        datepub: "1949",
-        avalibale: "12",
-      },
-      {
-        title: "Pride and Prejudice",
-        author: "Jane Austen",
-        datepub: "1813",
-        avalibale: "6",
-      },
-      {
-        title: "The Catcher in the Rye",
-        author: "J.D. Salinger",
-        datepub: "1951",
-        avalibale: "4",
-      },
-    ]);
+    getBooks();
+   
   }, [location]);
+
+  const deleteBook = async (e) => {
+    e.preventDefault();
+    const title = e.target.parentElement.firstChild.textContent;
+    const isbn = e.target.parentElement.firstChild.nextSibling.textContent;
+    try {
+      const response = await axios.delete(`http://192.168.198.73:2000/books/${isbn}`);
+      console.log(response);
+      window.location.reload()
+    }
+    catch (error) {
+      console.error("Error fetching users", error);
+    }
+  };
+  
+
   const bookmapping = books.map((book) => {
     return (
       <tr>
         <td>{book.title}</td>
-        <td>{book.author}</td>
-        <td>{book.datepub}</td>
-        <td>{book.avalibale}</td>
+        <td>{book.isbn}</td>
+        <td>{book.authors[0].nom}</td>
+        <td>{book.datePublication}</td>
+        <td>{book.nmbCopie}</td>
+        <td onClick={deleteBook}>delete</td>
       </tr>
     );
   });
@@ -75,9 +75,20 @@ function Book() {
       [name]: value,
     }));
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    book.authors=auteurs;
     console.log(book);
+    try {
+      const response = await axios.post('http://192.168.198.73:2000/books', book);
+      console.log(response);
+     setBook({});
+     window.location.reload()
+      
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
+    
   };
 
   const myFunction = (e) => {
@@ -102,6 +113,28 @@ function Book() {
         }
       }
     }
+  };
+
+  const [auteurs, setAuteurs] = useState([]);
+  const [auteur, setAuteur] = useState({});
+  const handleAuteurs = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    setAuteur((prevAuteur) => ({
+      ...prevAuteur,
+      [name]: value,
+    }));
+  };
+  const [inputSets, setInputSets] = useState([{ nom: "", prénom: "", dateNaissance: "" }]);
+  const addAuteur = (e) => {
+    e.preventDefault();
+    console.log(auteurs)
+    setAuteurs((prevAuteurs) => [...prevAuteurs, auteur]);
+    setAuteur({});
+
+    setInputSets(
+      inputSets.concat([{ nom: "", prenom: "", dateNaissance: "" }])
+    );
   };
   return (
     <div>
@@ -156,26 +189,62 @@ function Book() {
           <div>
             {activeRoute === "/books" && (
               <div className=" py-20">
-                <form className="form-book grid grid-cols-6 gap-5">
+                <form
+                  id="form-book"
+                  className="form-book grid grid-cols-6 gap-5"
+                >
                   {[
-                    "Title",
-                    "Author",
-                    "Description",
-                    "date de publication",
-                    "IDSN",
-                  ].map((label) => (
+                    { label: "Title", name: "title" },
+                    { label: "ISBN", name: "isbn" },
+                    { label: "Date de publication", name: "datePublication" },
+                    { label: "Copies disponibles", name: "nmbCopie" },
+                  ].map((element) => (
                     <React.Fragment>
-                      <label>{label}</label>
+                      <label>{element.label}</label>
                       <input
-                        name={label}
+                        name={element.name}
                         onChange={handleInputChange}
                         className=" col-span-2"
                         type="text"
-                        placeholder={label}
+                        placeholder={element.label}
                       />
                     </React.Fragment>
                   ))}
-
+                  <label className="col-start-1">Auteurs</label>
+                  <button className="col-start-6" onClick={addAuteur}>+</button>
+                  {inputSets.map((inputSet, index) => (
+                    <React.Fragment key={index}>
+                      <input
+                        name={"nom"}
+                        
+                        onChange={(event) => handleAuteurs(event)}
+                        className="col-span-2"
+                        type="text"
+                        placeholder={"Nom Auteur "+(index+1)}
+                      />
+                      <input
+                        name={"prénom "}
+                       
+                        onChange={(event) =>
+                          handleAuteurs(event)
+                        }
+                        className="col-span-2"
+                        type="text"
+                        placeholder={"Prenom Auteur "+(index+1) }
+                      />
+                      <input
+                        name={"dateNaissance "}
+                        
+                        onChange={(event) =>
+                          handleAuteurs(event)
+                        }
+                        className="col-span-2"
+                        type="text"
+                        placeholder={"Date de Naissance Auteur "+(index+1)}
+                      />
+                    </React.Fragment>
+                  ))}
+                  
                   <button
                     onClick={handleSubmit}
                     className="col-start-5 col-span-2"
@@ -199,9 +268,10 @@ function Book() {
                 <table>
                   <thead>
                     <tr>
-                      <th>Title</th>
-                      <th>Author</th>
-                      <th>date de publication</th>
+                      <th>Titre</th>
+                      <th>ISBN</th>
+                      <th>Auteurs</th>
+                      <th>Date de publication</th>
                       <th>copies disponibles</th>
                     </tr>
                   </thead>

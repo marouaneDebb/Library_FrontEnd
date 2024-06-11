@@ -23,36 +23,37 @@ function Prets() {
     { path: "/pret/all", label: "All pret" },
   ];
 
+  const getPrets = async () => {
+    try {
+      const response = await axios.get("http://192.168.198.73:2000/prets");
+      setPrets(response.data);
+    }
+    catch (e){
+      console.log(e)
+
+    }
+  }
+
+  const addPret = async () => {
+    try {
+      const response = await axios.post("http://192.168.198.73:2000/prets",pret);
+      console.log(response.data)
+    }
+    catch (e){
+      console.log(e)
+
+    }
+  }
+
+
+
+  
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser);
     handleRoutes();
-    setPrets([
-      {
-        adherent: "Sample Title",
-        livre: "Sample Author",
-        datepret: "Sample Date",
-        dateretour: "25",
-        agent: "25",
-        status: "OK",
-      },
-      {
-        adherent: "Sample Title",
-        livre: "Sample Author",
-        datepret: "Sample Date",
-        dateretour: "25",
-        agent: "25",
-        status: "-",
-      },
-      {
-        adherent: "Sample Title",
-        livre: "Sample Author",
-        datepret: "Sample Date",
-        dateretour: "25",
-        agent: "25",
-        status: "Non Rendu",
-      },
-    ]);
+    getPrets()
   }, [location]);
   const pretMapping = prets.map((pret) => {
     return (
@@ -100,6 +101,7 @@ function Prets() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
+    addPret();
     setPret({});
     console.log(pret);
   };

@@ -31,12 +31,10 @@ function Agents() {
     const formattedDate = formatDate(date);
 
     try {
-      const response = await axios.get("http://localhost:5000/users");
+      const response = await axios.get("http://192.168.198.73:2000/users");
       setAgents(response.data);
-      let count = response.data.filter((agent) =>
-        agent.password.includes(formattedDate)
-      ).length;
-      setPassword(`${formattedDate}${(count + 1).toString().padStart(3, "0")}`);
+      let count = response.data.length;
+      setPassword(`${formattedDate}${(count ).toString().padStart(3, "0")}`);
     } catch (error) {
       console.error("Error fetching users", error);
     }
@@ -49,11 +47,29 @@ function Agents() {
 
     preparingPassword();
   }, [location]);
+
+
+  const deleteAgent = async (e) => {
+    e.preventDefault();
+    const username = e.target.parentElement.firstChild.textContent;
+    try {
+      const response = await axios.delete(
+        `http://192.168.198.73:2000/users/${username}`
+      );
+      console.log(response);
+      window.location.reload();
+    }
+    catch (error) {
+      console.error("Error fetching users", error);
+    }
+  };
+  
   const agentMapping = agents.map((agent) => {
     return (
       <tr>
         <td>{agent.username}</td>
         <td>{agent.role}</td>
+        <td onClick={deleteAgent}>delete</td>
       </tr>
     );
   });
@@ -75,16 +91,17 @@ function Agents() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    agent.password = password;
+    agent.motDePasse = password;
+    console.log(agent)
     try {
-      const response = await axios.post("http://localhost:5000/users", agent);
+      const response = await axios.post("http://192.168.198.73:2000/users/add", agent);
       console.log(response.data);
     } catch (error) {
       console.error("Error inserting user", error);
     }
 
     setAgent({});
-    window.location.reload();
+    window.location.reload()
   };
   const myFunction = (e) => {
     e.preventDefault();
@@ -190,7 +207,7 @@ function Agents() {
                   </select>
                   <label>password</label>
                   <input
-                    name="password"
+                    name="motDePasse"
                     onChange={handleInputChange}
                     className="password col-span-2"
                     type="text"

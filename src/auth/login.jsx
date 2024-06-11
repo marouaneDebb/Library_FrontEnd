@@ -15,12 +15,11 @@ function Login() {
     setError("");
       
       try {
-        const response = await axios.get('http://localhost:5000/users/search?' , {
-          params: {
-            username: username,
-            password: password
-          }
-        
+      
+          console.log("salam");
+        const response = await axios.post('http://192.168.198.73:2000/users/authenticate', {
+          username: username,
+          motDePasse: password
         });
         
         localStorage.setItem("token", response.data.password);
@@ -30,12 +29,15 @@ function Login() {
 
       
       } catch (error) {
+        console.error('Error:', error.message);
         if (error.response.status === 404) {
           // Handle 404 error here
           setError("Invalid username or password");
           console.error('User not found');
         } else {
           // Handle other errors
+          
+
           console.error('Error:', error.message);
         }
       }
