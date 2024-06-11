@@ -69,7 +69,7 @@ function Agents() {
       <tr>
         <td>{agent.username}</td>
         <td>{agent.role}</td>
-        <td onClick={deleteAgent}>delete</td>
+      
       </tr>
     );
   });

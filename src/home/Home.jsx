@@ -1,53 +1,34 @@
 import "./home.css";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import { useEffect, useState } from "react";
+import axios from "axios";
 function Home() {
   if (localStorage.getItem("token")) {
-    window.location.href =`/${localStorage.getItem("user")}`;
+    window.location.href = `/${localStorage.getItem("user")}`;
   }
   const [books, setBooks] = useState([]);
-  useEffect(() => {
+  const getBooks = async () => {  
+    try {
+      const response = await axios.get("http://192.168.198.73:2000/books");
+  
+      setBooks(response.data);
 
-  setBooks([
-    {
-      title: "The Great Gatsby",
-      author: "F. Scott Fitzgerald",
-      datepub: "1925",
-      avalibale: "10",
-    },
-    {
-      title: "To Kill a Mockingbird",
-      author: "Harper Lee",
-      datepub: "1960",
-      avalibale: "8",
-    },
-    {
-      title: "1984",
-      author: "George Orwell",
-      datepub: "1949",
-      avalibale: "12",
-    },
-    {
-      title: "Pride and Prejudice",
-      author: "Jane Austen",
-      datepub: "1813",
-      avalibale: "6",
-    },
-    {
-      title: "The Catcher in the Rye",
-      author: "J.D. Salinger",
-      datepub: "1951",
-      avalibale: "4",
-    },
-  ]);
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
+  }
+  useEffect(() => {
+    getBooks();
   }, []);
   const bookmapping = books.map((book) => {
     return (
       <tr>
         <td>{book.title}</td>
-        <td>{book.author}</td>
-        <td>{book.datepub}</td>
-        <td>{book.avalibale}</td>
+        <td>{book.isbn}</td>
+        <td>{book.authors[0].nom}</td>
+        <td>{book.datePublication}</td>
+        <td>{book.nmbCopie}</td>
+      
       </tr>
     );
   });
@@ -110,11 +91,7 @@ function Home() {
       </div>
       <main>
         <section id="home">
-          <p className="intro">
-            Bienvenue,
-            
-            
-          </p>
+          <p className="intro">Bienvenue,</p>
           <div class="highlight hours">
             <h3>Heures d'ouverture</h3>
             <p>
@@ -164,28 +141,29 @@ function Home() {
           </div>
         </section>
 
-        <div id="books" className="table" >
-                <input
-                  type="text"
-                  id="myInput"
-                  onChange={(e) => {
-                    myFunction(e);
-                  }}
-                  placeholder="Search .."
-                  title="Type in a name"
-                />
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Author</th>
-                      <th>date de publication</th>
-                      <th>copies disponibles</th>
-                    </tr>
-                  </thead>
-                  <tbody>{bookmapping}</tbody>
-                </table>
-              </div>
+        <div id="books" className="table">
+          <input
+            type="text"
+            id="myInput"
+            onChange={(e) => {
+              myFunction(e);
+            }}
+            placeholder="Search .."
+            title="Type in a name"
+          />
+          <table>
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>ISBN</th>
+                <th>Auteurs</th>
+                <th>Date de publication</th>
+                <th>copies disponibles</th>
+              </tr>
+            </thead>
+            <tbody>{bookmapping}</tbody>
+          </table>
+        </div>
       </main>
 
       <footer>

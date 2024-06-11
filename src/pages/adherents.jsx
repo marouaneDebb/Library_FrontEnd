@@ -23,6 +23,7 @@ function Adherents() {
     { label: "email", name: "mail" },
     { label: "téléphone", name: "téléphone" },
     { label: "adresse", name: "adresse" },
+
   ];
 
   const menuItems = [
@@ -66,15 +67,18 @@ function Adherents() {
     preparingPassword();
   }, [location]);
 
-  const deleteAdherent = async (e) => {
-    e.preventDefault();
-    const username = e.target.parentElement.firstChild.nextSibling.textContent;
+  const deleteAdherent = async (adherent) => {
+ 
+    const username = adherent.username;
+  
     try {
+      
       const response = await axios.delete(
-        `http://192.168.198.73:2000/users/${username}`
+        `http://192.168.198.73:2000/adherents/${username}`
       );
       console.log(response);
-      window.location.reload();
+      window.location.reload()
+    
     } catch (error) {
       console.error("Error fetching users", error);
     }
@@ -91,7 +95,7 @@ function Adherents() {
         <td>{adherent.contact.mail}</td>
         <td>{adherent.contact.téléphone}</td>
         <td>{adherent.contact.adresse}</td>
-        <td onClick={deleteAdherent}>delete</td>
+        <td onClick={()=>{deleteAdherent(adherent)}}>delete</td>
       </tr>
     );
   });
@@ -134,6 +138,7 @@ function Adherents() {
     } catch (error) {
       console.error("Error inserting user", error);
     }
+    console.log(adherent);
     try {
       const response = await axios.post(
         "http://192.168.198.73:2000/adherents/add",
@@ -145,7 +150,7 @@ function Adherents() {
     }
 
     setAdherent({});
-    window.location.reload();
+    //window.location.reload();
   };
   const myFunction = (e) => {
     e.preventDefault();
@@ -270,7 +275,9 @@ function Adherents() {
                     <tr>
                       {attribus.map((attribu) => (
                         <th>{attribu.label}</th>
+                        
                       ))}
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>{adherentMapping}</tbody>

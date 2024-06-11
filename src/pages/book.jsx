@@ -3,7 +3,7 @@ import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { c } from "tar";
+
 function Book() {
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -36,12 +36,11 @@ function Book() {
    
   }, [location]);
 
-  const deleteBook = async (e) => {
-    e.preventDefault();
-    const title = e.target.parentElement.firstChild.textContent;
-    const isbn = e.target.parentElement.firstChild.nextSibling.textContent;
+  const deleteBook = async (book) => {
+ 
+ 
     try {
-      const response = await axios.delete(`http://192.168.198.73:2000/books/${isbn}`);
+      const response = await axios.delete(`http://192.168.198.73:2000/books/${book.isbn}`);
       console.log(response);
       window.location.reload()
     }
@@ -59,7 +58,7 @@ function Book() {
         <td>{book.authors[0].nom}</td>
         <td>{book.datePublication}</td>
         <td>{book.nmbCopie}</td>
-        <td onClick={deleteBook}>delete</td>
+        <td className="status-btn" onClick={()=>{deleteBook(book)}}>delete</td>
       </tr>
     );
   });
@@ -77,7 +76,9 @@ function Book() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+   
     book.authors=auteurs;
+    
     console.log(book);
     try {
       const response = await axios.post('http://192.168.198.73:2000/books', book);
@@ -128,12 +129,12 @@ function Book() {
   const [inputSets, setInputSets] = useState([{ nom: "", prénom: "", dateNaissance: "" }]);
   const addAuteur = (e) => {
     e.preventDefault();
-    console.log(auteurs)
+ 
     setAuteurs((prevAuteurs) => [...prevAuteurs, auteur]);
     setAuteur({});
 
     setInputSets(
-      inputSets.concat([{ nom: "", prenom: "", dateNaissance: "" }])
+      inputSets.concat([{ nom: "", prénom: "", dateNaissance: "" }])
     );
   };
   return (
@@ -223,7 +224,7 @@ function Book() {
                         placeholder={"Nom Auteur "+(index+1)}
                       />
                       <input
-                        name={"prénom "}
+                        name="prenom"
                        
                         onChange={(event) =>
                           handleAuteurs(event)
@@ -233,7 +234,7 @@ function Book() {
                         placeholder={"Prenom Auteur "+(index+1) }
                       />
                       <input
-                        name={"dateNaissance "}
+                        name="dateNaissance"
                         
                         onChange={(event) =>
                           handleAuteurs(event)
@@ -273,6 +274,7 @@ function Book() {
                       <th>Auteurs</th>
                       <th>Date de publication</th>
                       <th>copies disponibles</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>{bookmapping}</tbody>

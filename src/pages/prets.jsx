@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
-
+import axios from "axios";
 function Prets() {
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -10,12 +10,11 @@ function Prets() {
   const [prets, setPrets] = useState([]);
   const [pret, setPret] = useState({});
   const attribus = [
-    "adherent",
-    "agent",
-    "livre",
-    "datepret",
-    "dateretour",
-    "status",
+    { label: "adherent", name: "adherentId" },
+    { label: "livre", name: "livreId" },
+    { label: "date De Pret", name: "dateDePret" },
+    { label: "date De Retour", name: "dateDeRetour" },
+    
   ];
 
   const menuItems = [
@@ -25,7 +24,7 @@ function Prets() {
 
   const getPrets = async () => {
     try {
-      const response = await axios.get("http://192.168.198.73:2000/prets");
+      const response = await axios.get("http://192.168.198.73:2000/loans");
       setPrets(response.data);
     }
     catch (e){
@@ -35,9 +34,11 @@ function Prets() {
   }
 
   const addPret = async () => {
+    pret.status="prété"
     try {
-      const response = await axios.post("http://192.168.198.73:2000/prets",pret);
+      const response = await axios.post("http://192.168.198.73:2000/loans",pret);
       console.log(response.data)
+      window.location.reload();
     }
     catch (e){
       console.log(e)
@@ -58,24 +59,33 @@ function Prets() {
   const pretMapping = prets.map((pret) => {
     return (
       <tr>
-        <td>{pret.adherent}</td>
-        <td>{pret.agent}</td>
-        <td>{pret.livre}</td>
-        <td>{pret.datepret}</td>
-        <td>{pret.dateretour}</td>
-        <td className={"status-btn"+(pret.status === "OK"?" ok":" not-ok")} onClick={()=>{handleStatus(pret)}}>{pret.status}</td>
+        <td>{pret.adherentId}</td>
+        <td>{pret.livreId}</td>
+        <td>{pret.dateDePret}</td>
+        <td>{pret.dateDeRetour}</td>
+        <td className={"status-btn"+(pret.status === "retourné"?" ok":" not-ok")} onClick={()=>{handleStatus(pret)}}>{pret.status}</td>
       </tr>
     );
   });
-  const handleStatus = (pret) => {
+  const handleStatus = async (pret) => {
     console.log(pret);
-    if (pret.status === "OK") {
-      pret.status = "Non Rendu";
+    if (pret.status === "retourné") {
+      pret.status = "prété";
 
     } else {
-      pret.status = "OK";
+      pret.status = "retourné";
     }
-    setPrets([...prets]);
+    try {
+ 
+      const response = await axios.put(`http://192.168.198.73:2000/loans/${pret.id}/${pret.status}`); 
+      window.location.reload();
+      
+     
+    }
+    catch (e){
+      console.log(e)
+    }
+
  
     
   };
@@ -182,15 +192,15 @@ function Prets() {
             {activeRoute === "/pret" && (
               <div className=" py-20">
                 <form className="form-book grid grid-cols-6 gap-5">
-                  {attribus.map((label) => (
+                  {attribus.map((e) => (
                     <React.Fragment>
-                      <label>{label}</label>
+                      <label>{e.label}</label>
                       <input
-                        name={label}
+                        name={e.name}
                         onChange={handleInputChange}
                         className="  col-span-2"
                         type="text"
-                        placeholder={label}
+                        placeholder={e.label}
                       />
                     </React.Fragment>
                   ))}
@@ -199,7 +209,7 @@ function Prets() {
                     onClick={handleSubmit}
                     className="col-start-5 col-span-2"
                   >
-                    Add Book
+                    Add Prêt
                   </button>
                 </form>
               </div>
@@ -219,9 +229,11 @@ function Prets() {
                   <thead>
                     <tr>
                       {attribus.map((attribu) => (
-                        <th>{attribu}</th>
+                        <th>{attribu.label}</th>
                       ))}
+                      <th>status</th>
                     </tr>
+                  
                   </thead>
                   <tbody>{pretMapping}</tbody>
                 </table>

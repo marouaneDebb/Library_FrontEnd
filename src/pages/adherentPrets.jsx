@@ -2,66 +2,56 @@ import React, { useState, useEffect } from "react";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
-
+import axios from "axios";
 function AdherentPrets() {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [activeRoute, setActiveRoute] = useState("");
   const [prets, setPrets] = useState([]);
   const [pret, setPret] = useState({});
-  const attribus = [
+  
 
-    "agent",
-    "livre",
-    "datepret",
-    "dateretour",
-    "status",
-  ];
+    const attribus = [
+     
+      { label: "livre", name: "livreId" },
+      { label: "date De Pret", name: "dateDePret" },
+      { label: "date De Retour", name: "dateDeRetour" },
+  
+    ];
+  
 
   const menuItems = [
     { path: "/mesprets", label: "Mes prets" },
   
   ];
 
+  const getPrets = async () => {
+    try {
+      const response = await axios.get("http://192.168.198.73:2000/loans");
+      let l=response.data.filter(
+        (pret) => pret.adherentId === localStorage.getItem("user")
+      )
+      setPrets(l);
+    }
+    catch (e){
+      console.log(e)
+
+    }
+  }
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser);
     handleRoutes();
-    setPrets([
-      {
-        adherent: "Sample Title",
-        livre: "Sample Author",
-        datepret: "Sample Date",
-        dateretour: "25",
-        agent: "25",
-        status: "OK",
-      },
-      {
-        adherent: "Sample Title",
-        livre: "Sample Author",
-        datepret: "Sample Date",
-        dateretour: "25",
-        agent: "25",
-        status: "-",
-      },
-      {
-        adherent: "Sample Title",
-        livre: "Sample Author",
-        datepret: "Sample Date",
-        dateretour: "25",
-        agent: "25",
-        status: "Non Rendu",
-      },
-    ]);
+    getPrets();
   }, [location]);
   const pretMapping = prets.map((pret) => {
     return (
       <tr>
        
-        <td>{pret.agent}</td>
-        <td>{pret.livre}</td>
-        <td>{pret.datepret}</td>
-        <td>{pret.dateretour}</td>
+       
+        <td>{pret.livreId}</td>
+        <td>{pret.dateDePret}</td>
+        <td>{pret.dateDeRetour}</td>
         <td>{pret.status}</td>
       </tr>
     );
@@ -169,8 +159,9 @@ function AdherentPrets() {
                   <thead>
                     <tr>
                       {attribus.map((attribu) => (
-                        <th>{attribu}</th>
+                        <th>{attribu.label}</th>
                       ))}
+                      <th>status</th>
                     </tr>
                   </thead>
                   <tbody>{pretMapping}</tbody>
