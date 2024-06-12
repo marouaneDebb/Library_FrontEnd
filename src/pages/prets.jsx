@@ -96,6 +96,8 @@ function Prets() {
   };
   const handleInputChange = (e) => {
     if (e.target.name === "agent") {
+
+
         e.target.value = localStorage.getItem("user");
         setPret((prevPret) => ({
             ...prevPret,
@@ -103,7 +105,23 @@ function Prets() {
         }));
         return;
     }
+
+
     const { name, value } = e.target;
+
+    if (name=="dateDeRetour") {
+      if (pret.dateDePret === undefined) {
+        alert("date de pret doit etre rempli");
+        window.location.reload(); 
+        return;
+      }
+      if (value < pret.dateDePret) {
+        alert("date de retour doit etre superieur a la date de pret");
+        window.location.reload();
+        return;
+      }
+    }
+
     setPret((prevPret) => ({
       ...prevPret,
       [name]: value,
@@ -199,7 +217,7 @@ function Prets() {
                         name={e.name}
                         onChange={handleInputChange}
                         className="  col-span-2"
-                        type="text"
+                        type={e.name=="dateDePret"||e.name=="dateDeRetour"?"date":"text"}
                         placeholder={e.label}
                       />
                     </React.Fragment>

@@ -19,6 +19,11 @@ function SideBar() {
       label: "Mes Prets",
       role: ["adherent"],
     },
+    {
+      path: `/${localStorage.getItem("user")}/profile`,
+      label: "Mon Profile",
+      role: ["adherent"],
+    },
     { path: "/agent", label: "Agents", role: ["admin"] },
   ];
 

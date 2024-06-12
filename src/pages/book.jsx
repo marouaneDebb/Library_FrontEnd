@@ -10,55 +10,67 @@ function Book() {
   const [activeRoute, setActiveRoute] = useState("");
   const [books, setBooks] = useState([]);
   const [book, setBook] = useState({});
-
+  const [auteurs, setAuteurs] = useState([]);
+  const [auteur, setAuteur] = useState({});
   const menuItems = [
     { path: "/books", label: "Add Book" },
     { path: "/books/all", label: "All Books" },
   ];
 
-  const getBooks = async () => {  
+  const getBooks = async () => {
     try {
       const response = await axios.get("http://192.168.198.73:2000/books");
-  
       setBooks(response.data);
-
     } catch (error) {
       console.error("Error fetching users", error);
     }
-  }
-
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser);
     handleRoutes();
     getBooks();
-   
   }, [location]);
 
   const deleteBook = async (book) => {
- 
- 
     try {
-      const response = await axios.delete(`http://192.168.198.73:2000/books/${book.isbn}`);
+      const response = await axios.delete(
+        `http://192.168.198.73:2000/books/${book.isbn}`
+      );
       console.log(response);
-      window.location.reload()
-    }
-    catch (error) {
+      window.location.reload();
+    } catch (error) {
       console.error("Error fetching users", error);
     }
   };
-  
 
   const bookmapping = books.map((book) => {
     return (
       <tr>
         <td>{book.title}</td>
         <td>{book.isbn}</td>
-        <td>{book.authors[0].nom}</td>
+        <td>
+          <ul>
+            {book.authors.map((author) => {
+              return (
+                <li>
+                  {author.nom} {author.prenom}
+                </li>
+              );
+            })}
+          </ul>
+        </td>
         <td>{book.datePublication}</td>
         <td>{book.nmbCopie}</td>
-        <td className="status-btn" onClick={()=>{deleteBook(book)}}>delete</td>
+        <td
+          className="status-btn"
+          onClick={() => {
+            deleteBook(book);
+          }}
+        >
+          delete
+        </td>
       </tr>
     );
   });
@@ -69,6 +81,14 @@ function Book() {
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name == "datePublication") {
+      let today = new Date().toISOString().split("T")[0];
+      if (value > today) {
+        alert("Date de publication doit être inférieure à la date actuelle");
+        window.location.reload();
+        return;
+      }
+    }
     setBook((prevBook) => ({
       ...prevBook,
       [name]: value,
@@ -76,20 +96,26 @@ function Book() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-   
-    book.authors=auteurs;
-    
-    console.log(book);
+    if (
+      auteur.nom &&
+      auteur.prenom &&
+      auteur.nom != "" &&
+      auteur.prenom != ""
+    ) {
+      auteurs.push(auteur);
+    }
+
+    console.log(auteurs);
+    book.authors = auteurs;
+
     try {
       const response = await axios.post('http://192.168.198.73:2000/books', book);
       console.log(response);
-     setBook({});
-     window.location.reload()
-      
+      setBook({});
+       window.location.reload()
     } catch (error) {
       console.error("Error fetching users", error);
     }
-    
   };
 
   const myFunction = (e) => {
@@ -116,21 +142,36 @@ function Book() {
     }
   };
 
-  const [auteurs, setAuteurs] = useState([]);
-  const [auteur, setAuteur] = useState({});
   const handleAuteurs = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
+    if (name == "dateNaissance") {
+      let today = new Date().toISOString().split("T")[0];
+      if (value > today) {
+        alert("Date de Naissance doit être inférieure à la date actuelle");
+        window.location.reload();
+        return;
+      }
+    }
     setAuteur((prevAuteur) => ({
       ...prevAuteur,
       [name]: value,
     }));
   };
-  const [inputSets, setInputSets] = useState([{ nom: "", prénom: "", dateNaissance: "" }]);
+  const [inputSets, setInputSets] = useState([
+    { nom: "", prénom: "", dateNaissance: "" },
+  ]);
   const addAuteur = (e) => {
     e.preventDefault();
- 
-    setAuteurs((prevAuteurs) => [...prevAuteurs, auteur]);
+    if (
+      auteur.nom &&
+      auteur.prenom &&
+      auteur.nom != "" &&
+      auteur.prenom != ""
+    ) {
+      setAuteurs((prevAuteurs) => [...prevAuteurs, auteur]);
+    }
+
     setAuteur({});
 
     setInputSets(
@@ -206,46 +247,43 @@ function Book() {
                         name={element.name}
                         onChange={handleInputChange}
                         className=" col-span-2"
-                        type="text"
+                        type={
+                          element.name == "datePublication" ? "date" : "text"
+                        }
                         placeholder={element.label}
                       />
                     </React.Fragment>
                   ))}
                   <label className="col-start-1">Auteurs</label>
-                  <button className="col-start-6" onClick={addAuteur}>+</button>
+                  <button className="col-start-6" onClick={addAuteur}>
+                    +
+                  </button>
                   {inputSets.map((inputSet, index) => (
                     <React.Fragment key={index}>
                       <input
                         name={"nom"}
-                        
                         onChange={(event) => handleAuteurs(event)}
                         className="col-span-2"
                         type="text"
-                        placeholder={"Nom Auteur "+(index+1)}
+                        placeholder={"Nom Auteur " + (index + 1)}
                       />
                       <input
                         name="prenom"
-                       
-                        onChange={(event) =>
-                          handleAuteurs(event)
-                        }
+                        onChange={(event) => handleAuteurs(event)}
                         className="col-span-2"
                         type="text"
-                        placeholder={"Prenom Auteur "+(index+1) }
+                        placeholder={"Prenom Auteur " + (index + 1)}
                       />
                       <input
                         name="dateNaissance"
-                        
-                        onChange={(event) =>
-                          handleAuteurs(event)
-                        }
+                        onChange={(event) => handleAuteurs(event)}
                         className="col-span-2"
-                        type="text"
-                        placeholder={"Date de Naissance Auteur "+(index+1)}
+                        type="date"
+                        placeholder={"Date de Naissance Auteur " + (index + 1)}
                       />
                     </React.Fragment>
                   ))}
-                  
+
                   <button
                     onClick={handleSubmit}
                     className="col-start-5 col-span-2"

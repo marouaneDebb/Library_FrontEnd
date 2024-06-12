@@ -20,3 +20,6 @@ label {
 .not-ok {
   color: rgb(70, 4, 4);
 }
+input:disabled {
+  background: #e2e2e2 !important;
+}

@@ -23,7 +23,6 @@ function Adherents() {
     { label: "email", name: "mail" },
     { label: "téléphone", name: "téléphone" },
     { label: "adresse", name: "adresse" },
-
   ];
 
   const menuItems = [
@@ -40,20 +39,19 @@ function Adherents() {
   async function preparingPassword(event) {
     const date = new Date();
     const formattedDate = formatDate(date);
+    setPassword(`${formattedDate}${(1).toString().padStart(3, "0")}`);
     try {
       const response = await axios.get("http://192.168.198.73:2000/users");
-      
+
       let count = response.data.length;
-       setPassword(`${formattedDate}${(count).toString().padStart(3, "0")}`);
-    }
-    
-    catch (error){
+      setPassword(`${formattedDate}${count.toString().padStart(3, "0")}`);
+    } catch (error) {
       console.error("Error fetching users", error);
     }
+
     try {
       const response = await axios.get("http://192.168.198.73:2000/adherents");
-      
-     
+
       setAdherents(response.data);
     } catch (error) {
       console.error("Error fetching users", error);
@@ -68,23 +66,31 @@ function Adherents() {
   }, [location]);
 
   const deleteAdherent = async (adherent) => {
- 
     const username = adherent.username;
-  
+
     try {
-      
       const response = await axios.delete(
         `http://192.168.198.73:2000/adherents/${username}`
       );
       console.log(response);
-      window.location.reload()
-    
+      window.location.reload();
     } catch (error) {
       console.error("Error fetching users", error);
     }
   };
 
-  
+  const sendEmail = async (to, subject, text) => {
+    try {
+      const response = await axios.post("http://localhost:3001/send-email", {
+        to,
+        subject,
+        text,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.log("Error sending email: " + error.message);
+    }
+  };
 
   const adherentMapping = adherents.map((adherent) => {
     return (
@@ -95,7 +101,13 @@ function Adherents() {
         <td>{adherent.contact.mail}</td>
         <td>{adherent.contact.téléphone}</td>
         <td>{adherent.contact.adresse}</td>
-        <td onClick={()=>{deleteAdherent(adherent)}}>delete</td>
+        <td
+          onClick={() => {
+            deleteAdherent(adherent);
+          }}
+        >
+          delete
+        </td>
       </tr>
     );
   });
@@ -148,6 +160,28 @@ function Adherents() {
     } catch (error) {
       console.error("Error inserting user", error);
     }
+
+    sendEmail(
+      adherent.contact.mail,
+      "Welcome to EmiBook",
+      `
+        Dear ${adherent.nom + " " + adherent.prénom},
+
+        Welcome to EmiBook!
+
+        We are pleased to inform you that your account has been created successfully. Please find your login credentials below:
+
+        Username: ${adherent.username}
+        Temporary Password: ${password}
+
+        For your security, please log in to your account as soon as possible and change your password.
+
+        If you have any questions or need further assistance, feel free to contact our support team.
+
+        Best regards,
+        The EmiBook Team
+        `
+    );
 
     setAdherent({});
     //window.location.reload();
@@ -236,7 +270,7 @@ function Adherents() {
                         name={e.name}
                         onChange={handleInputChange}
                         className="  col-span-2"
-                        type="text"
+                        type={e.name == "mail" ? "email" : "text"}
                         placeholder={e.label}
                       />
                     </React.Fragment>
@@ -275,7 +309,6 @@ function Adherents() {
                     <tr>
                       {attribus.map((attribu) => (
                         <th>{attribu.label}</th>
-                        
                       ))}
                       <th></th>
                     </tr>
