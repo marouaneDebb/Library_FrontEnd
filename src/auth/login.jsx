@@ -16,20 +16,14 @@ function Login() {
 
     try {
       console.log("salam");
-      // const response = await axios.post(
-      //   "http://192.168.198.73:2000/users/authenticate",
-      //   {
-      //     username: username,
-      //     motDePasse: password,
-      //   }
-      // );
-      const response = {
-        data: {
-          password: "password",
-          role: "adherent",
-          username: "admin",
-        },
-      };
+      const response = await axios.post(
+        "http://192.168.198.73:2000/users/authenticate",
+        {
+          username: username,
+          motDePasse: password,
+       }
+      );
+      
 
       localStorage.setItem("token", response.data.password);
       localStorage.setItem("role", response.data.role);
