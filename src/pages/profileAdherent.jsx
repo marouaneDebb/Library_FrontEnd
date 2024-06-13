@@ -28,7 +28,7 @@ function ProfileAdherent() {
       );
       window.location.reload();
     } catch (e) {
-      if (e.response.status === 404) {
+      if (e.response.status === 400) {
         // Handle 404 error here
         alert("mot de passe non changé essayez plus tard ");
        
