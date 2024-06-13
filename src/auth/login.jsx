@@ -17,7 +17,7 @@ function Login() {
     try {
       console.log("salam");
       const response = await axios.post(
-        "http://192.168.198.73:2000/users/authenticate",
+        "http://localhost:2000/users/authenticate",
         {
           username: username,
           motDePasse: password,

@@ -19,7 +19,7 @@ function Book() {
 
   const getBooks = async () => {
     try {
-      const response = await axios.get("http://192.168.198.73:2000/books");
+      const response = await axios.get("http://localhost:2000/books");
       setBooks(response.data);
     } catch (error) {
       console.error("Error fetching users", error);
@@ -36,7 +36,7 @@ function Book() {
   const deleteBook = async (book) => {
     try {
       const response = await axios.delete(
-        `http://192.168.198.73:2000/books/${book.isbn}`
+        `http://localhost:2000/books/${book.isbn}`
       );
       console.log(response);
       window.location.reload();
@@ -109,7 +109,7 @@ function Book() {
     book.authors = auteurs;
 
     try {
-      const response = await axios.post('http://192.168.198.73:2000/books', book);
+      const response = await axios.post('http://localhost:2000/books', book);
       console.log(response);
       setBook({});
        window.location.reload()

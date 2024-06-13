@@ -9,7 +9,7 @@ function Home() {
   const [books, setBooks] = useState([]);
   const getBooks = async () => {  
     try {
-      const response = await axios.get("http://192.168.198.73:2000/books");
+      const response = await axios.get("http://localhost:2000/books");
   
       setBooks(response.data);
 

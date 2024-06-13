@@ -27,7 +27,7 @@ function AdherentPrets() {
 
   const getPrets = async () => {
     try {
-      const response = await axios.get("http://192.168.198.73:2000/loans");
+      const response = await axios.get("http://localhost:2000/loans");
       let l=response.data.filter(
         (pret) => pret.adherentId === localStorage.getItem("user")
       )

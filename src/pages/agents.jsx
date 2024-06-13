@@ -32,7 +32,7 @@ function Agents() {
     const formattedDate = formatDate(date);
 
     try {
-      const response = await axios.get("http://192.168.198.73:2000/users");
+      const response = await axios.get("http://localhost:2000/users");
       setAgents(response.data);
       let count = response.data.length;
       setPassword(`${formattedDate}${(count ).toString().padStart(3, "0")}`);
@@ -55,7 +55,7 @@ function Agents() {
     const username = e.target.parentElement.firstChild.textContent;
     try {
       const response = await axios.delete(
-        `http://192.168.198.73:2000/users/${username}`
+        `http://localhost:2000/users/${username}`
       );
       console.log(response);
       window.location.reload();
@@ -95,7 +95,7 @@ function Agents() {
     agent.motDePasse = password;
     console.log(agent)
     try {
-      const response = await axios.post("http://192.168.198.73:2000/users/add", agent);
+      const response = await axios.post("http://localhost:2000/users/add", agent);
       console.log(response.data);
     } catch (error) {
       console.error("Error inserting user", error);

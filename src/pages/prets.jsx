@@ -24,7 +24,7 @@ function Prets() {
 
   const getPrets = async () => {
     try {
-      const response = await axios.get("http://192.168.198.73:2000/loans");
+      const response = await axios.get("http://localhost:2000/loans");
       setPrets(response.data);
     }
     catch (e){
@@ -36,7 +36,7 @@ function Prets() {
   const addPret = async () => {
     pret.status="prété"
     try {
-      const response = await axios.post("http://192.168.198.73:2000/loans",pret);
+      const response = await axios.post("http://localhost:2000/loans",pret);
       console.log(response.data)
       window.location.reload();
     }
@@ -82,7 +82,7 @@ function Prets() {
     }
     try {
  
-      const response = await axios.put(`http://192.168.198.73:2000/loans/${pret.id}/${pret.status}`); 
+      const response = await axios.put(`http://localhost:2000/loans/${pret.id}/${pret.status}`); 
       window.location.reload();
       
      

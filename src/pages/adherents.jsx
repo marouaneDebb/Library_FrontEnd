@@ -41,7 +41,7 @@ function Adherents() {
     const formattedDate = formatDate(date);
     setPassword(`${formattedDate}${(1).toString().padStart(3, "0")}`);
     try {
-      const response = await axios.get("http://192.168.198.73:2000/users");
+      const response = await axios.get("http://localhost:2000/users");
 
       let count = response.data.length;
       setPassword(`${formattedDate}${count.toString().padStart(3, "0")}`);
@@ -50,7 +50,7 @@ function Adherents() {
     }
 
     try {
-      const response = await axios.get("http://192.168.198.73:2000/adherents");
+      const response = await axios.get("http://localhost:2000/adherents");
 
       setAdherents(response.data);
     } catch (error) {
@@ -70,7 +70,7 @@ function Adherents() {
 
     try {
       const response = await axios.delete(
-        `http://192.168.198.73:2000/adherents/${username}`
+        `http://localhost:2000/adherents/${username}`
       );
       console.log(response);
       window.location.reload();
@@ -143,7 +143,7 @@ function Adherents() {
     };
     try {
       const response = await axios.post(
-        "http://192.168.198.73:2000/users/add",
+        "http://localhost:2000/users/add",
         user
       );
       console.log(response.data);
@@ -153,7 +153,7 @@ function Adherents() {
     console.log(adherent);
     try {
       const response = await axios.post(
-        "http://192.168.198.73:2000/adherents/add",
+        "http://localhost:2000/adherents/add",
         adherent
       );
       console.log(response.data);
@@ -184,7 +184,7 @@ function Adherents() {
     );
 
     setAdherent({});
-    //window.location.reload();
+    window.location.reload();
   };
   const myFunction = (e) => {
     e.preventDefault();
