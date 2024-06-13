@@ -40,9 +40,14 @@ function Prets() {
       console.log(response.data)
       window.location.reload();
     }
-    catch (e){
-      console.log(e)
-
+     catch (e) {
+      
+        // Handle 404 error here
+        alert("livre non existant ! ");
+      
+        console.error("Error:", e.message);
+      }
+    
     }
   }
 
