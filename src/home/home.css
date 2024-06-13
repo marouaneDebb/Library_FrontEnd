@@ -1,0 +1,178 @@
+.logo {
+  color: rgb(19, 19, 192);
+  font-size: 1.6rem;
+  font-weight: bold;
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+}
+
+.nav {
+  padding: 1.5rem 3rem;
+  background: linear-gradient(
+    to right,
+    rgba(233, 233, 255, 0.158),
+    rgba(216, 216, 245, 0.493),
+    rgba(158, 158, 255, 0.5)
+  );
+}
+main {
+  padding: 6rem 23rem;
+}
+.mainu {
+  padding: 6rem 23rem;
+}
+footer {
+  background: #333;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.highlight {
+  background: #e0e0e0;
+  padding: 2rem;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  transition: 0.5s ease-in-out;
+}
+
+h3 {
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #0c00b9;
+}
+.hours,
+.news,
+.events {
+  padding: 1rem;
+  margin: 2rem 0;
+  background: linear-gradient(
+    to right,
+    rgb(233, 233, 255),
+    rgb(216, 216, 245),
+    rgb(158, 158, 255)
+  );
+  border-left: 5px solid #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.intro {
+  padding: 1rem;
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+a {
+  color: #000000;
+  text-decoration: none;
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+a:hover {
+  color: #0c00b9;
+}
+
+.login {
+  color: #2a229b;
+  padding: 1rem 2.5rem;
+}
+body {
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+
+  font-weight: 500;
+  background: #f4f3fc;
+}
+.special {
+  color: #211d55;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+}
+.fullscreen-video-wrap {
+  position: fixed;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -100;
+}
+.sidebar {
+  color: white;
+  padding: 2rem;
+
+  height: fit-content;
+  text-align: center;
+  transition: 0.5s ease-in-out;
+}
+.mainb {
+  background: rgba(255, 255, 255, 0);
+  padding: 3rem 5rem;
+}
+
+
+.btn-active {
+  background-color: #333 !important ;
+}
+.form-book {
+  padding: 2rem;
+
+  background: linear-gradient(
+    to right,
+    rgb(233, 233, 255),
+    rgb(216, 216, 245),
+    rgb(158, 158, 255)
+  );
+  border-left: 5px solid #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background: linear-gradient(
+    to right,
+    rgb(233, 233, 255),
+    rgb(216, 216, 245),
+    rgb(158, 158, 255)
+  );
+}
+th {
+  background: #160e8dd2;
+  color: white;
+  padding: 0.5rem;
+  border-left: 1px solid #000000d2;
+}
+td {
+  padding: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid #160e8dd2;
+  border-left: 1px solid #000000d2;
+}
+
+.table {
+  padding: 5rem 3rem;
+  width: 100%;
+}
+select,
+input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 5px;
+
+  background: rgb(239, 239, 255);
+}

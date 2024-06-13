@@ -1,0 +1,25 @@
+.password {
+  background: rgb(184, 183, 183) !important;
+
+}
+.password::placeholder {
+  color: rgb(0, 0, 0) !important;
+}
+label {
+  padding: 1rem;
+}
+.status-btn {
+  background:#716acf;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.ok {
+  color: rgb(10, 107, 7);
+  font-weight: 600;
+}
+.not-ok {
+  color: rgb(70, 4, 4);
+}
+input:disabled {
+  background: #e2e2e2 !important;
+}

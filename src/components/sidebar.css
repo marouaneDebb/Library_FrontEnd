@@ -1,0 +1,30 @@
+.option {
+  align-items: center;
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  background: hsla(248, 100%, 94%, 0.719);
+  border-left: 10px solid #333;
+  border-radius: 10px;
+ 
+}
+a{
+  
+  text-decoration: none;
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 1.3rem;
+  font-weight: bold;
+ 
+}
+.active
+{
+    
+    color:#0c00b9;
+    border-left: 10px solid #0c00b9;
+}
+.aactive
+{
+    
+    color:#0c00b9;
+    
+}
