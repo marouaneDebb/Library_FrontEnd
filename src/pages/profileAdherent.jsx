@@ -28,7 +28,16 @@ function ProfileAdherent() {
       );
       window.location.reload();
     } catch (e) {
-      console.log(e);
+      if (e.response.status === 404) {
+        // Handle 404 error here
+        alert("mot de passe non changé essayez plus tard ");
+       
+      } else {
+        // Handle other errors
+
+        console.error("Error:", e.message);
+      }
+    
     }
   };
 
@@ -65,6 +74,7 @@ function ProfileAdherent() {
       } else if (adherent.newPassword === adherent.motDePasse) {
         return;
       }
+      
       changePassword();
     }
   };
