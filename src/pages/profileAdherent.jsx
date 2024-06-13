@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
-import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./pages.css";
+
 function ProfileAdherent() {
   const [adherent, setAdherent] = useState({});
   const attribus = [
@@ -19,7 +19,7 @@ function ProfileAdherent() {
   const changePassword = async () => {
     try {
       const response = await axios.post(
-        `http://192.168.198.73:2000/users/updatePassword`,
+        "http://localhost:2000/users/updatePassword",
         {
           username: adherent.username,
           oldPassword: adherent.motDePasse,
@@ -29,28 +29,30 @@ function ProfileAdherent() {
       window.location.reload();
     } catch (e) {
       if (e.response.status === 400) {
-        // Handle 404 error here
+        // Handle 400 error here
         alert("mot de passe non changé essayez plus tard ");
-       
       } else {
         // Handle other errors
-
         console.error("Error:", e.message);
       }
-    
     }
   };
 
   const getAdherent = async () => {
     try {
-        const response = await axios.get("http://192.168.198.73:2000/adherents");
-  
-        setAdherent(response.data.filter((adherent) => adherent.username === localStorage.getItem("user"))[0]);
-        adherent.motDePasse = localStorage.getItem("password");
-      } catch (error) {
-        console.error("Error fetching users", error);
+      const response = await axios.get("http://localhost:2000/adherents");
+      const user = response.data.find(
+        (adherent) => adherent.username === localStorage.getItem("user")
+      );
+      if (user) {
+        user.motDePasse = localStorage.getItem("password");
+        setAdherent(user);
       }
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
   };
+
   useEffect(() => {
     getAdherent();
   }, []);
@@ -60,7 +62,6 @@ function ProfileAdherent() {
     setAdherent({ ...adherent, [name]: value });
     console.log(adherent);
   };
- 
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -74,10 +75,10 @@ function ProfileAdherent() {
       } else if (adherent.newPassword === adherent.motDePasse) {
         return;
       }
-      
       changePassword();
     }
   };
+
   return (
     <div>
       <nav className="nav grid grid-cols-10 gap-3">
@@ -117,15 +118,15 @@ function ProfileAdherent() {
         <main className="mainb col-span-10">
           <form className="form-book grid grid-cols-6 gap-5">
             {attribus.map((e) => (
-              <React.Fragment>
+              <React.Fragment key={e.name}>
                 <label>{e.label}</label>
                 <input
-                  name={e.name != "motDePasse" ? e.name : "newPassword"}
-                  placeholder={adherent[e.name]}
+                  placeholder={adherent[e.name] || ""}
+                  name={e.name !== "motDePasse" ? e.name : "newPassword"}
                   onChange={handleInputChange}
-                  className="  col-span-2"
-                  type={e.name == "mail" ? "email" : "text"}
-                  disabled={e.name != "motDePasse" ? true : false}
+                  className="col-span-2"
+                  type={e.name === "mail" ? "email" : "text"}
+                  disabled={e.name !== "motDePasse"}
                 />
               </React.Fragment>
             ))}
@@ -142,4 +143,4 @@ function ProfileAdherent() {
   );
 }
 
-export default ProfileAdherent;
+export default ProfileAdherent

@@ -32,8 +32,8 @@ function Login() {
       window.location.href = `/${response.data.username}`;
     } catch (error) {
       console.error("Error:", error.message);
-      if (error.response.status === 404) {
-        // Handle 404 error here
+      if (error.response.status === 400) {
+        // Handle 400 error here
         setError("Invalid username or password");
         console.error("User not found");
       } else {

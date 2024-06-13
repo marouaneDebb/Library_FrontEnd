@@ -42,11 +42,11 @@ function Prets() {
     }
      catch (e) {
       
-        // Handle 404 error here
+        // Handle 400 error here
         alert("livre non existant ! ");
       
         console.error("Error:", e.message);
-      }
+      
     
     }
   }
